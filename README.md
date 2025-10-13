@@ -94,7 +94,7 @@ curl -X POST -F "file=@/{本地文件路径}" http://127.0.0.1:5000/convert
 #### R 脚本
 
 ``` r
-加载 R 包
+# 加载 R 包
 library(httr)
 
 # 接口配置
@@ -181,6 +181,7 @@ git clone git@github.com/chuxinyuan/tomd.git .
 python -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
+pip install gunicorn
 ```
 
 ### 3. 配置 Systemd 服务
@@ -192,16 +193,21 @@ sudo nano /etc/systemd/system/tomd.service
 
 粘贴以下内容（注意修改路径为实际项目路径）：
 
-``` bash
+``` ini
 [Unit]
 Description=Document to Markdown Converter Service
 After=network.target
+
 [Service]
 User=www-data
 Group=www-data
 WorkingDirectory=/srv/tomd
-ExecStart=/srv/tomd/.venv/bin/python app.py
+ExecStart=/srv/tomd/.venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app
+# -w 4：启动 4 个工作进程（建议设置为 CPU 核心数的 2 倍）
+# -b 0.0.0.0:5000：绑定到 5000 端口，允许外部访问
 Restart=always
+MemoryLimit=512M
+
 [Install]
 WantedBy=multi-user.target
 ```
@@ -209,10 +215,19 @@ WantedBy=multi-user.target
 启动并设置开机自启：
 
 ```
+# 重新加载系统服务配置
 sudo systemctl daemon-reload
+
+# 启动服务并设置开机自启
 sudo systemctl start tomd
 sudo systemctl enable tomd
+
+# 查看服务状态（确认是否启动成功）
 sudo systemctl status tomd
+# 注：成功标识：输出中会显示 active (running)（绿色），且无 error 日志。
+
+# 查看实时日志（排查错误时使用）
+sudo journalctl -u tomd -f
 ```
 
 ### 4. 防火墙配置
