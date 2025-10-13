@@ -206,7 +206,7 @@ ExecStart=/srv/tomd/.venv/bin/gunicorn -w 4 -b 0.0.0.0:5000 app:app
 # -w 4：启动 4 个工作进程（建议设置为 CPU 核心数的 2 倍）
 # -b 0.0.0.0:5000：绑定到 5000 端口，允许外部访问
 Restart=always
-MemoryLimit=512M
+MemoryMax=512M
 
 [Install]
 WantedBy=multi-user.target
