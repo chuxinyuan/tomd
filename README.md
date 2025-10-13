@@ -62,7 +62,7 @@ python app.py
 
 4. **验证服务**
 
-服务启动后，访问 `http://127.0.0.1:8000`，若页面显示如下信息说明服务正常运行。
+服务启动后，访问 `http://127.0.0.1:5000`，若页面显示如下信息说明服务正常运行。
 
 ```
 Not Found
@@ -76,7 +76,7 @@ The requested URL was not found on the server. If you entered the URL manually p
 
 | 项目     | 内容                                      |
 | -------- | ----------------------------------------- |
-| 接口地址 | `http://{服务IP}:8000/convert`            |
+| 接口地址 | `http://{服务IP}:5000/convert`            |
 | 请求方法 | POST                                      |
 | 内容类型 | `multipart/form-data`（文件上传）         |
 | 核心参数 | `file`：待转换的文件（大小建议 ≤ 10MB）   |
@@ -88,7 +88,7 @@ The requested URL was not found on the server. If you entered the URL manually p
 
 ``` bash
 # 替换 {本地文件路径} 为实际文件（如 ./test.pdf）
-curl -X POST -F "file=@/{本地文件路径}" http://127.0.0.1:8000/convert
+curl -X POST -F "file=@/{本地文件路径}" http://127.0.0.1:5000/convert
 ```
 
 #### R 脚本
@@ -98,7 +98,7 @@ curl -X POST -F "file=@/{本地文件路径}" http://127.0.0.1:8000/convert
 library(httr)
 
 # 接口配置
-api_url = "http://{服务IP}:8000/convert"  # 替换为实际服务IP
+api_url = "http://{服务IP}:5000/convert"  # 替换为实际服务IP
 file_path = "path/to/file"  # 替换为待测试文件路径
 
 # 检查文件是否存在
@@ -218,8 +218,8 @@ sudo systemctl status tomd
 ### 4. 防火墙配置
 
 ```
-# 开放 8000 端口
-sudo ufw allow 8000/tcp
+# 开放 5000 端口
+sudo ufw allow 5000/tcp
 sudo ufw reload
 ```
 
@@ -227,7 +227,7 @@ sudo ufw reload
 
 1. **本地启动后无法访问？**
 
-* 检查端口是否被占用：`netstat -tulpn | grep 8000`（Linux/macOS）、`netstat -ano | findstr :8000`（Windows）。
+* 检查端口是否被占用：`netstat -tulpn | grep 5000`（Linux/macOS）、`netstat -ano | findstr :5000`（Windows）。
 * 确认服务绑定地址为 `0.0.0.0`（允许外部访问）或 `127.0.0.1`（仅本地访问）。
 
 2. **文件转换报 500 错误？**
@@ -237,8 +237,8 @@ sudo ufw reload
 
 3. **服务器部署后无法通过 IP 访问？**
 
-* 检查防火墙是否开放 8000 端口：`sudo ufw status`。
-* 确认服务器安全组（如阿里云、AWS）已放行 8000 端口。
+* 检查防火墙是否开放 5000 端口：`sudo ufw status`。
+* 确认服务器安全组（如阿里云、AWS）已放行 5000 端口。
 
 ## 七、技术栈
 

@@ -39,5 +39,5 @@ def convert_to_markdown():
             return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
-    # 监听在所有网络接口的 8000 端口上
-    app.run(host='0.0.0.0', port=8000, debug=True)
+    # 监听在所有网络接口的 5000 端口上
+    app.run(host='0.0.0.0', port=5000, debug=True)
