@@ -42,13 +42,13 @@ git clone https://github.com/chuxinyuan/tomd.git
 
 ``` bash
 # 创建并激活虚拟环境（推荐）
-python -m venv venv
+python -m venv .venv
 
 # Windows 激活
-venv\Scripts\activate
+.venv\Scripts\activate
 
 # macOS/Linux 激活
-source venv/bin/activate
+source .venv/bin/activate
 
 # 安装依赖
 pip install -r requirements.txt
