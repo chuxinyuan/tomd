@@ -12,11 +12,11 @@
 
 ### 1. 本地开发环境
 
-| 依赖项     | 版本要求  | 安装命令                                                                                             |
-| ---------- | --------- | ------------------------------------------------ |
-| Python     | 3.11+     | 参考 [Python 官网](https://www.python.org/) 安装 |
-| Flask      | 2.0+      | `pip install flask`                              |
-| markitdown | 1.0+      | `pip install 'markitdown[all]'`                  |
+| 依赖项     | 版本要求  | 安装命令                                                 |
+| ---------- | --------- | ------------------------------------------------------ |
+| Python     | 3.11+     | 参考 [Python 官网](https://www.python.org/) 安装        |
+| Flask      | 2.0+      | `pip install flask`                                    |
+| markitdown | 1.0+      | `pip install 'markitdown[pdf, pptx, docx, xlsx, xls]'` |
 
 ### 2. 依赖清单导出
 
@@ -34,10 +34,8 @@ pip freeze > requirements.txt
 ``` bash
 # 方式一：使用 SSH (推荐)
 git clone git@github.com/chuxinyuan/tomd.git
-cd tomd
 # 方式二：使用 HTTPS
 git clone https://github.com/chuxinyuan/tomd.git
-cd tomd
 ```
 
 2. **安装依赖**
