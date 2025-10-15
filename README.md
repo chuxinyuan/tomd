@@ -65,9 +65,7 @@ python app.py
 服务启动后，访问 `http://127.0.0.1:5000`，若页面显示如下信息说明服务正常运行。
 
 ```
-Not Found
-
-The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+TOMD API Service is running.
 ```
 
 ## 四、接口调用说明
@@ -94,41 +92,62 @@ curl -X POST -F "file=@/{本地文件路径}" http://127.0.0.1:5000/convert
 #### R 脚本
 
 ``` r
-# 加载 R 包
-library(httr)
-
-# 接口配置
-api_url = "http://{服务IP}:5000/convert"  # 替换为实际服务IP
-file_path = "path/to/file"  # 替换为待测试文件路径
-
-# 检查文件是否存在
-if (!file.exists(file_path)) {
-  stop(paste("文件不存在:", file_path))
-}
-
-# 发送文件上传请求
-tryCatch({
-  response = POST(
-    url = api_url,
-    body = list(
-      file = upload_file(file_path)
-    ),
-    encode = "multipart"
-  )
-  
-  # 解析响应结果
-  if (status_code(response) == 200) {
-    result = content(response, "parsed")  # 解析JSON响应
-    cat("转换成功！\nMarkdown内容预览:\n")
-    cat(substr(result$markdown_content, 1, 500), "...\n")  # 显示前500字符
-  } else {
-    error_info = content(response, "parsed")
-    cat("请求失败: ", error_info$error, "\n")
+#'
+#' 将文件转换为 Markdown
+#'
+#' 此函数将指定路径的文件上传到转换服务 API，并获取转换后的 Markdown 内容。
+#' 它封装了文件上传、请求发送和响应处理的全部逻辑。
+#'
+#' @param file_path 字符串，待转换文件的本地完整路径。
+#' @param api_url 字符串，转换服务的 API 地址。
+#'   默认使用在线服务 "http://127.0.0.1:5000/convert"。
+#'
+#' @return 如果成功，返回一个包含 Markdown 内容的字符串。
+#'   如果失败（文件不存在、API 返回错误或网络问题），则返回 NULL 并发出警告或错误。
+#'
+tomd = \(file_path, api_url = "http://127.0.0.1:5000/convert") {
+  # 检查文件是否存在，如果不存在则立即停止并报错
+  if (!file.exists(file_path)) {
+    stop(paste("文件不存在:", file_path))
   }
   
-}, error = function(e) {
-  cat("请求发生错误:", e$message, "\n")
-})
+  # 使用 tryCatch 捕获网络请求过程中可能发生的错误
+  tryCatch({
+    # 发送 POST 请求
+    response = httr::POST(
+      url = api_url,
+      body = list(
+        file = httr::upload_file(file_path)
+      ),
+      encode = "multipart"
+    )
+    
+    # 检查 API 响应的 HTTP 状态码
+    if (httr::status_code(response) == 200) {
+      result = httr::content(response, "parsed", encoding = "UTF-8")
+      if (!is.null(result$markdown_content)) {
+        message("API请求成功，文件转换完成。")
+        return(result$markdown_content)
+      } else {
+        warning("警告：API返回了成功状态，但响应中未找到 'markdown_content' 字段。")
+        return(NULL)
+      }
+    } else {
+      error_info = httr::content(response, "parsed", encoding = "UTF-8")
+      error_message <- paste(
+        "API请求失败，HTTP状态码:", httr::status_code(response),
+        "\n服务器返回错误信息:", 
+        ifelse(is.null(error_info$error), "未知错误", error_info$error)
+      )
+      warning(error_message)
+      return(NULL)
+    }
+  }, error = function(e) {
+    # 捕获 tryCatch 中的网络错误
+    error_message = paste("请求发生严重网络错误:", e$message)
+    stop(error_message)
+  })
+}
 ```
 
 ### 3. 响应说明
@@ -155,7 +174,7 @@ tryCatch({
 
 ```
 {"error": "Input stream must be a readable BinaryIO object."}  # 文件流处理错误
-{"error": "Unsupported file format"}                          # 不支持的文件格式
+{"error": "Unsupported file format"}                           # 不支持的文件格式
 ```
 
 ## 五、Debian 服务器部署

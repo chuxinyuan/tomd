@@ -9,7 +9,7 @@ md = MarkItDown()
 
 @app.route('/')
 def index():
-    return "TOMD API Service is running", 200
+    return "TOMD API Service is running.", 200
 
 @app.route('/convert', methods=['POST'])
 def convert_to_markdown():
