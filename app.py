@@ -7,6 +7,10 @@ app = Flask(__name__)
 # 初始化 MarkItDown 实例
 md = MarkItDown()
 
+@app.route('/')
+def index():
+    return "TOMD API Service is running", 200
+
 @app.route('/convert', methods=['POST'])
 def convert_to_markdown():
     # 检查请求中是否包含文件
