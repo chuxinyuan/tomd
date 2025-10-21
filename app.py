@@ -11,7 +11,7 @@ md = MarkItDown()
 def index():
     return "TOMD API Service is running.", 200
 
-@app.route('/convert', methods=['POST'])
+@app.route('/convert', methods=['POST']) # type: ignore
 def convert_to_markdown():
     # 检查请求中是否包含文件
     if 'file' not in request.files:
